@@ -22,32 +22,41 @@
 /**
  * Initializes the memory profiler. Call this function as
  * early as possible in your handler
- * @param {string} title - The title of the book.
- * @param {string} author - The author of the book.
+ * @param NJSRequest r - the njs request object.
+ * @param {function} reporterFn - function that takes the output and reports it. Built in options are `logReporter`, `fileReporter` functions provided in this module
  */
 function init(r, reporterFn) {
   const requestId = r.variables.request_id;
-  const initialStats = Object.assign({}, njs.memoryStats);
+  const initialStats = njs.memoryStats;
+  const req_start_ms = Date.now();
   const events = [];
   const reporter = reporterFn === null ? null : reporterFn || logReporter;
 
   const getReport = function getReport() {
+    const req_end_ms = Date.now();
+
     return {
       request_id: requestId,
       cluster_size: initialStats.cluster_size,
       page_size: initialStats.page_size,
-      begin: nonStaticMemoryStats(initialStats),
-      end: nonStaticMemoryStats(njs.memoryStats),
+      begin: Object.assign(
+        { req_start_ms },
+        nonStaticMemoryStats(initialStats)
+      ),
+      end: Object.assign({ req_end_ms }, nonStaticMemoryStats(njs.memoryStats)),
       growth: diff(initialStats, njs.memoryStats),
+      elapsed_time_ms: req_end_ms - req_start_ms,
       events,
     };
   };
 
   const pushEvent = function pushEvent(event, meta) {
+    meta = meta || {};
+    meta.created_at_ms = Date.now();
     events.push({
       event,
       meta,
-      rawStats: nonStaticMemoryStats(njs.memoryStats),
+      raw_stats: nonStaticMemoryStats(njs.memoryStats),
     });
   };
 

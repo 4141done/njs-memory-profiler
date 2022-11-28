@@ -6,13 +6,13 @@ This is a small tool designed to allow you understand the per-request memory usa
 
 ## TODO:
 
-- Unit tests
-- Add CONTRIBUTING.md
-- Add Code of conduct file
-- Allow report to be written to variable in access log
-- Complete jsdocs
-- Add CHANGELOG
-- NPM push on version change via github actions
+* Unit tests
+* Add CONTRIBUTING.md
+* Add Code of conduct file
+* Allow report to be written to variable in access log
+* Complete jsdocs
+* Add CHANGELOG
+* NPM push on version change via github actions
 
 ## Installation
 
@@ -25,9 +25,11 @@ This module will install to a folder called `njs_modules` in the root of your pr
 ## Usage
 
 Assume we have a basic setup like this:
+
 `main.mjs`
 
-```
+
+```javascript
 function hello(r) {
   r.return(200, "hello");
 }
@@ -37,7 +39,8 @@ export default { hello };
 
 `nginx.conf`
 
-```
+
+```nginx
 events {}
 
 error_log /tmp/error.log debug;
@@ -56,9 +59,11 @@ http {
 ```
 
 Next, import the package, and initialize the profiler:
+
 `main.mjs`
 
-```
+
+```javascript
 import profiler from "./njs_modules/njs-memory-profiler/njs-memory-profiler.mjs";
 
 function hello(r) {
@@ -110,7 +115,8 @@ profiler.init(r, (report, r) => {
 
 At any point after you initialize the profiler, you can take a snapshot of the memory state at a certain point:
 
-```
+
+```javascript
 import profiler from "./njs-memory-profiler.mjs";
 
 function hello(r) {
@@ -190,6 +196,7 @@ See the annotated example of output below:
 
 There is a small amount of overhead from the profiler, however it is smaller than one "block" of memory so adding the profiler won't make a difference in your baseline number. However you will roll over to the next block more quickly. For any measurements, assume that you have a variance of `page_size`.
 
+
 ## Interpreting memory growth
 
 Njs pre-allocates memory and then continues to preallocate more in "blocks" of `page_size` bytes. This means that it's possible to add code that will certainly use more memory, but `size` may not change because njs is working within its preallocated memory footprint already.
@@ -197,3 +204,4 @@ Njs pre-allocates memory and then continues to preallocate more in "blocks" of `
 ## Contributing
 
 Please see the [contribution guide](CONTRIBUTING.md)
+

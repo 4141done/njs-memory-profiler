@@ -28,6 +28,7 @@ Assume we have a basic setup like this:
 
 `main.mjs`
 
+
 ```javascript
 function hello(r) {
   r.return(200, "hello");
@@ -37,6 +38,7 @@ export default { hello };
 ```
 
 `nginx.conf`
+
 
 ```nginx
 events {}
@@ -48,7 +50,7 @@ http {
 
   server {
     listen 4000;
-    
+
     location / {
       js_content main.hello;
     }
@@ -59,6 +61,7 @@ http {
 Next, import the package, and initialize the profiler:
 
 `main.mjs`
+
 
 ```javascript
 import profiler from "./njs_modules/njs-memory-profiler/njs-memory-profiler.mjs";
@@ -87,7 +90,7 @@ import profiler from "./njs-memory-profiler.mjs";
 profiler.init(r, profiler.fileReporter);
 ```
 
-will write files to the current directory.  The filename is in the format `<request_id>.json`
+will write files to the current directory. The filename is in the format `<request_id>.json`
 
 ### Custom reporting
 
@@ -111,6 +114,7 @@ profiler.init(r, (report, r) => {
 ## Measuring Memory at Points
 
 At any point after you initialize the profiler, you can take a snapshot of the memory state at a certain point:
+
 
 ```javascript
 import profiler from "./njs-memory-profiler.mjs";
@@ -190,8 +194,14 @@ See the annotated example of output below:
 
 ## Profiling overhead
 
-There is a small amount of overhead from the profiler, however it is smaller than one "block" of memory so adding the profiler won't make a different in your baseline number.  However you will roll over to the next block more quickly.  For any measurements, assume that you have a variance of `page_size`.
+There is a small amount of overhead from the profiler, however it is smaller than one "block" of memory so adding the profiler won't make a difference in your baseline number. However you will roll over to the next block more quickly. For any measurements, assume that you have a variance of `page_size`.
+
 
 ## Interpreting memory growth
 
 Njs pre-allocates memory and then continues to preallocate more in "blocks" of `page_size` bytes. This means that it's possible to add code that will certainly use more memory, but `size` may not change because njs is working within its preallocated memory footprint already.
+
+## Contributing
+
+Please see the [contribution guide](CONTRIBUTING.md)
+

@@ -188,7 +188,7 @@ See the annotated example of output below:
 
 ## Profiling overhead
 
-There is a small amount of overhead from the profiler, however it is smaller than one "block" of memory so adding the profiler won't make a different in your baseline number. However you will roll over to the next block more quickly. For any measurements, assume that you have a variance of `page_size`.
+There is a small amount of overhead from the profiler, however it is smaller than one "block" of memory so adding the profiler won't make a difference in your baseline number. However you will roll over to the next block more quickly. For any measurements, assume that you have a variance of `page_size`.
 
 ## Interpreting memory growth
 

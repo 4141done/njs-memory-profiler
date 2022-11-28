@@ -1,19 +1,21 @@
 # njs-memory-profiler
-**NOTE: Install via npm is currently in test and not recommended**
-> To install for now, clone the repo and copy "index.mjs" into your njs project folder.  From your code you may then `import profiler from "./index.mjs";`. 
-
 This is a small tool designed to allow you understand the per-request memory usage of your njs script in a non-production environment.
+
+> This library is under active development and the interface may change without notice.
 
 ## TODO:
 * Unit tests
 * Add CONTRIBUTING.md
 * Add Code of conduct file
-* Make sure post install script works as expected
 * Allow report to be written to variable in access log
 * Complete jsdocs
+* Add CHANGELOG
+* NPM push on version change via github actions
 
 ## Installation
 The installation command with npm is a little different because we want the js files to exist in our source directory.
+
+This module will install to a folder called `njs_modules` in the root of your project. If you want to use a different directory, run the install with the `NJS_MODULES_DIR` environment variable specified:
 
 `NJS_MODULES_DIR=./ npm install njs-memory-profiler`
 
@@ -50,7 +52,7 @@ http {
 Next, import the package, and initialize the profiler:
 `main.mjs`
 ```
-import profiler from "./njs-memory-profiler.mjs";
+import profiler from "./njs_modules/njs-memory-profiler/njs-memory-profiler.mjs";
 
 function hello(r) {
   profiler.init(r);

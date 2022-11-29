@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: 4141done/njs-test-runner:1.23.2_0.7.9
-      options: --entrypoint "/bin/bash -l"
+      options: --entrypoint "'/bin/bash -l'"
     steps:
       - uses: actions/checkout@v3
       - run: npm ci

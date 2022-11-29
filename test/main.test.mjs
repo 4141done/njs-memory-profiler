@@ -30,7 +30,7 @@ test("getReport contains byte size allocated to vm from init to time report gene
 
   const results = p.getReport();
   expect(results.begin.size).toBeGreaterThanOrEqual(0);
-  expect(results.begin.size).toBeGreaterThanOrEqual(results.end.size);
+  expect(results.end.size).toBeGreaterThanOrEqual(results.begin.size);
   done();
 });
 

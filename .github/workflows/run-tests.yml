@@ -6,17 +6,28 @@ on:
   pull_request:
     branches: [main]
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
       image: 4141done/njs-test-runner:1.23.2_0.7.9
-      options: --user root
+      env:
+        # This is take from the `PATH` variable in the target docker container.  The HOME variable
+        # will be overridden even if set here.
+        PATH: /root/.asdf/shims:/root/.asdf/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
     steps:
+      # When using `container` to run jobs in a container, github forcefully rewrites the `HOME` variable
+      # This causes scripts that reference that variable to behave unpredictably. This step sets the
+      # variable back to the root user.
+      - name: Reset HOME variable forced by Github Actions
+        run: "echo HOME=/root | tee -a $GITHUB_ENV"
       - uses: actions/checkout@v3
       - name: Install dependencies
-        shell: bash
-        run: source $HOME/.bashrc && npm ci
+        run: npm ci
       - name: Run tests
-        shell: bash
-        run: source $HOME/.bashrc && npm test
+        run: npm test

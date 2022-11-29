@@ -11,11 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: 4141done/njs-test-runner:1.23.2_0.7.9
+      options: --user root
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
         shell: bash
-        run: source /root/.bashrc && npm ci
+        run: npm ci
       - name: Run tests
         shell: bash
-        run: source /root/.bashrc && npm test
+        run: npm test

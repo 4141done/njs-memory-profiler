@@ -1,11 +1,12 @@
 /**
  * micro-Jest testing framework
  * written by Minkyu lee (@niklauslee)
+ * https://github.com/kaluma-project/kaluma/tree/master/src/modules/__ujest
+ * adapted for njs by Javier Evans (@4141done)
  */
 
 var tests = [];
 var finished = [];
-var timer = null;
 
 function test(name, fn) {
   tests.push({
@@ -191,11 +192,14 @@ function start(idx) {
     var _t = tests[idx];
     tests = [_t];
   }
-  
-  tests.reduce()
-  
-  if tests.length > 0 {
-    tests.forEach((t) => {
+
+  checkTestProgress();
+}
+
+function checkTestProgress() {
+  setTimeout(() => {
+    if (tests.length > 0) {
+      var t = tests[0];
       if (t.state === 0) {
         // idle
         t.state = 1;
@@ -206,8 +210,6 @@ function start(idx) {
               t.state = 3;
               error(err.toString());
             } else {
-              // Set the pass/fail status for the test.
-              // Assertions increment `assertFail` when they are not true
               t.state = t.assertFail === 0 ? 2 : 3;
             }
           });
@@ -226,27 +228,22 @@ function start(idx) {
         );
         finished.push(tests.shift());
       }
-    });
-  } else {
-    throw("No tests found");
-}
-  
-  
 
-      if (tests.length > 0) {
-        var t = tests[0];
+      checkTestProgress();
+    } else {
+      console.log("");
+      var l = finished.length;
+      var f = finished.filter((ts) => ts.state === 3).length;
+      var p = l - f;
+      console.log(`Tests: ${p} passed, ${f} failed (${l} total)`);
 
-        runTestIteration();
-      } else {
-        console.log("");
-        var l = finished.length;
-        var f = finished.filter((ts) => ts.state === 3).length;
-        var p = l - f;
-        console.log(`Tests: ${p} passed, ${f} failed (${l} total)`);
+      if (f > 0) {
+        // njs doesn't have a `process.exit` equivalent
+        // So we have to throw here
+        throw "Single test file failed";
       }
-  
-
-  runTestIteration();
+    }
+  }, 0);
 }
 
 export default { test, expect, start };

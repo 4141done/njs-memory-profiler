@@ -12,7 +12,10 @@ function cmd(cmd, args) {
 }
 
 // Manually add test files here
-const tests = [cmd("njs", ["./test/main.test.mjs"])];
+const tests = [
+  cmd("njs", ["./test/main.test.mjs"]),
+  // Your test file here
+];
 
 if (tests.some((r) => r.status !== 0)) {
   console.error(

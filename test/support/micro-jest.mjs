@@ -1,5 +1,4 @@
-/**
- * micro-Jest testing framework
+/** @module micro-Jest testing framework
  * written by Minkyu lee (@niklauslee)
  * https://github.com/kaluma-project/kaluma/tree/master/src/modules/__ujest
  * adapted for njs by Javier Evans (@4141done)
@@ -243,7 +242,9 @@ function checkTestProgress() {
         throw "Single test file failed";
       }
     }
+    // The njs cli tool does not support non-zero timeouts
   }, 0);
 }
 
+// njs only supports the `export default` syntax
 export default { test, expect, start };

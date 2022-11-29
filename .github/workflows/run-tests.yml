@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: 4141done/njs-test-runner:1.23.2_0.7.9
-      options: --entrypoint "'/bin/bash -l -c'"
     steps:
       - uses: actions/checkout@v3
-      - run: npm ci
-      - run: npm test
+      - run: source $HOME/.bashrc && npm ci
+      - run: $HOME/.bashrc && npm test

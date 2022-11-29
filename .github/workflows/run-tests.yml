@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install dependencies
         shell: bash
-        run: npm ci
+        run: source $HOME/.bashrc && npm ci
       - name: Run tests
         shell: bash
-        run: npm test
+        run: source $HOME/.bashrc && npm test

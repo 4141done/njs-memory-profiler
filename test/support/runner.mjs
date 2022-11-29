@@ -11,7 +11,6 @@ function cmd(cmd, args) {
   return childProcess.spawnSync(cmd, args, { stdio: "inherit" });
 }
 
-// Manually add test files here
 const tests = [
   cmd("njs", ["./test/main.test.mjs"]),
   // Your test file here

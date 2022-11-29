@@ -10,6 +10,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    container:
+      image: nginx:1.23.2
+      env:
+        NJS_VERSION: 0.7.9
 
     strategy:
       matrix:
@@ -21,15 +25,5 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Check out njs 
-        uses: actions/checkout@v3
-        with:
-          name: nginx/njs
-          ref: 0.7.9
-      - run: |
-        cd njs;
-        ./configure;
-        make;
-        echo "${pwd}/build" >> $GITHUB_PATH ;
       - run: npm ci
       - run: npm test

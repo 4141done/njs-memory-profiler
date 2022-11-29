@@ -21,5 +21,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - name 
+        uses: actions/checkout@master
+        with:
+          name: nginx/njs
+          ref: 0.7.9
+      - run: |
+        cd njs;
+        ./configure;
+        make;
+        echo "${pwd}/build" >> $GITHUB_PATH ;
       - run: npm ci
       - run: npm test

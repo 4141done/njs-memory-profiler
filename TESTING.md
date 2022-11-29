@@ -42,12 +42,24 @@ Here is the matchers provided.
 
 ### Requirements
 
+#### Testing locally
+
 `njs` must be in your `PATH`. You can install the njs cli tool like so:
 
 1. `git clone git@github.com:nginx/njs.git && cd njs.git`
 2. `./configure`
 3. `make`
 4. `cp build/njs <somewhere in your PATH>`
+
+You can then run `npm test`.
+
+#### Testing in Docker
+
+Make sure you have [docker installed](https://docs.docker.com/get-docker/).
+From the project root:
+
+1. `docker-compose up` (you can provide `-d` if you want docker compose to run in the background)
+2. `npm test:docker`
 
 ### Creating a test
 

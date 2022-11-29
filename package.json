@@ -5,6 +5,7 @@
     "main": "src/index.mjs",
     "scripts": {
         "test": "node test/support/runner.mjs",
+        "test:docker": "docker-compose exec -it test /bin/bash -c -l 'npm run test' || echo 'Please start the container with \"docker-compose up\"'",
         "postinstall": "node scripts/postinstall.js"
     },
     "keywords": [

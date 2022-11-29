@@ -14,4 +14,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: source $HOME/.bashrc && npm ci
-      - run: $HOME/.bashrc && npm test
+      - run: source $HOME/.bashrc && npm test

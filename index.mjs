@@ -80,10 +80,23 @@ function nonStaticMemoryStats(rawStats) {
   };
 }
 
+function pushEventSync(event, meta, r) {
+  meta = meta || {};
+  meta.created_at_ms = Date.now();
+  const payload = {
+    request_id: r.variables.request_id,
+    event,
+    meta,
+    raw_stats: nonStaticMemoryStats(njs.memoryStats),
+  };
+
+  r.error(`{"type": "profiler:event", "payload": ${JSON.stringify(payload)} }`);
+}
+
 function logReporter(report, r) {
-  r.error("======== BEGIN MEMORY REPORT ==========");
-  r.error(JSON.stringify(report));
-  r.error("========  END MEMORY REPORT  ==========");
+  r.error(
+    `{"type": "profiler:summary", "payload": ${JSON.stringify(report)} }`
+  );
 }
 
 function fileReporter(report) {
@@ -99,4 +112,4 @@ function diff(initial, point) {
   };
 }
 
-export default { init, logReporter, fileReporter };
+export default { init, logReporter, fileReporter, pushEventSync };

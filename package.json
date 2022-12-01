@@ -5,7 +5,8 @@
   "main": "index.mjs",
   "scripts": {
     "test": "echo \"Prerelease code: tests pending\" && exit 0",
-    "postinstall": "node scripts/postinstall.js"
+    "postinstall": "node scripts/postinstall.js",
+    "log2json": "node scripts/logs-to-json.js"
   },
   "engines": {
     "node": ">=16"

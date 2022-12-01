@@ -7,6 +7,9 @@
     "test": "echo \"Prerelease code: tests pending\" && exit 0",
     "postinstall": "node scripts/postinstall.js"
   },
+  "engines": {
+    "node": ">=16"
+  },
   "keywords": [
     "njs",
     "nginx-njs"

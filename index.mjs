@@ -70,6 +70,7 @@ function init(r, reporterFn) {
   return {
     getReport,
     pushEvent,
+    requestId
   };
 }
 
@@ -80,11 +81,11 @@ function nonStaticMemoryStats(rawStats) {
   };
 }
 
-function pushEventSync(event, meta, r) {
+function pushEventSync(event, meta, r, request_id) {
   meta = meta || {};
   meta.created_at_ms = Date.now();
   const payload = {
-    request_id: r.variables.request_id,
+    request_id,
     event,
     meta,
     raw_stats: nonStaticMemoryStats(njs.memoryStats),

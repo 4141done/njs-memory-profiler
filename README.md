@@ -22,7 +22,7 @@ This module will install to a folder called `njs_modules` in the root of your pr
 
 `NJS_MODULES_DIR=./ npm install njs-memory-profiler`
 
-Note: As the installation will be performed by a post-install JavaScript using `node` the minimal required version of Node will be 15 or greater.
+Note: As the installation will be performed by a post-install JavaScript using `node` the minimal required version of Node will be 16 or greater.
 
 We recommend to use [nvm](https://github.com/nvm-sh/nvm) or [asdf](https://asdf-vm.com/) to manage your node versions.
 

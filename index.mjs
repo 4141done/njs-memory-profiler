@@ -25,52 +25,81 @@
  * @param NJSRequest r - the njs request object.
  * @param {function} reporterFn - function that takes the output and reports it. Built in options are `logReporter`, `fileReporter` functions provided in this module
  */
+// required js_var declarations:
+// $profile_id, $profile_events, $profile_begin, $profile_end
+// $profile_elapsed_time_ms, $profile_memory_growth_bytes
+// $profile_memory_growth_blocks
+// include profiler_vars.conf in `http` or lower
 function init(r, reporterFn) {
-  const requestId = r.variables.request_id;
-  const initialStats = njs.memoryStats;
-  const req_start_ms = Date.now();
-  const events = [];
+  // Check that js var declarations are done
+  r.variables.profile_id = r.variables.request_id;
+  r.variables.profile_begin = serialize(
+    Object.assign({ req_start_ms: Date.now() }, njs.memoryStats)
+  );
+  r.variables.profile_events = serialize([]);
   const reporter = reporterFn === null ? null : reporterFn || logReporter;
-
-  const getReport = function getReport() {
-    const req_end_ms = Date.now();
-
-    return {
-      request_id: requestId,
-      cluster_size: initialStats.cluster_size,
-      page_size: initialStats.page_size,
-      begin: Object.assign(
-        { req_start_ms },
-        nonStaticMemoryStats(initialStats)
-      ),
-      end: Object.assign({ req_end_ms }, nonStaticMemoryStats(njs.memoryStats)),
-      growth: diff(initialStats, njs.memoryStats),
-      elapsed_time_ms: req_end_ms - req_start_ms,
-      events,
-    };
-  };
-
-  const pushEvent = function pushEvent(event, meta) {
-    meta = meta || {};
-    meta.created_at_ms = Date.now();
-    events.push({
-      event,
-      meta,
-      raw_stats: nonStaticMemoryStats(njs.memoryStats),
-    });
-  };
 
   if (reporter) {
     njs.on("exit", () => {
       // No async work in this context
-      reporter(getReport(), r);
+      reporter(getReport(r), r);
     });
   }
+}
 
+function pushEvent(r, event, meta) {
+  meta = meta || {};
+  meta.created_at_ms = Date.now();
+
+  const events = deserialize(r.variables.profile_events);
+  events.push({
+    event,
+    meta,
+    raw_stats: nonStaticMemoryStats(njs.memoryStats),
+  });
+
+  r.variables.profile_events = serialize(events);
+}
+
+function getReport(r) {
+  const req_end_ms = Date.now();
+  const begin = deserialize(r.variables.profile_begin);
   return {
-    getReport,
-    pushEvent,
+    request_id: r.variables.profile_id,
+    cluster_size: begin.cluster_size,
+    page_size: begin.page_size,
+    begin:  nonStaticMemoryStats(begin),
+    end: Object.assign({ req_end_ms }, nonStaticMemoryStats(njs.memoryStats)),
+    growth: diff(begin, njs.memoryStats),
+    elapsed_time_ms: req_end_ms - begin.req_start_ms,
+    events: deserialize(r.variables.profile_events)
   };
+}
+
+function serialize(obj) {
+  return JSON.stringify(obj);
+}
+
+function deserialize(string_obj) {
+  return JSON.parse(string_obj);
+}
+
+function varReporter(report, r) {
+  r.error(`In the varReporter, ${JSON.stringify(report)}`);
+  r.variables.profile_end = serialize(report.end);
+  r.variables.profile_elapsed_time_ms = report.elapsed_time_ms;
+  r.variables.profile_memory_growth_bytes = report.growth.size_growth;
+  r.variables.profile_memory_growth_blocks = report.growth.nblocks_growth;
+}
+
+function logReporter(report, r) {
+  r.error(`{"type": "profiler:summary", "payload": ${JSON.stringify(report)} }`);
+}
+
+function fileReporter(report) {
+  const fs = require("fs");
+
+  return fs.writeFileSync(`${report.request_id}.json`, JSON.stringify(report));
 }
 
 function nonStaticMemoryStats(rawStats) {
@@ -80,18 +109,6 @@ function nonStaticMemoryStats(rawStats) {
   };
 }
 
-function logReporter(report, r) {
-  r.error("======== BEGIN MEMORY REPORT ==========");
-  r.error(JSON.stringify(report));
-  r.error("========  END MEMORY REPORT  ==========");
-}
-
-function fileReporter(report) {
-  const fs = require("fs");
-
-  return fs.writeFileSync(`${report.request_id}.json`, JSON.stringify(report));
-}
-
 function diff(initial, point) {
   return {
     size_growth: point.size - initial.size,
@@ -99,4 +116,4 @@ function diff(initial, point) {
   };
 }
 
-export default { init, logReporter, fileReporter };
+export default { init, pushEvent, logReporter, fileReporter, getReport, varReporter };

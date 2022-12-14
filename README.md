@@ -13,14 +13,23 @@ This is a small tool designed to allow you understand the per-request memory usa
 * Complete jsdocs
 * Add CHANGELOG
 * NPM push on version change via github actions
+* Implement various backends for the various store: http://nginx.org/en/docs/http/ngx_http_memcached_module.html
+nginx keyvalue store
+https://www.nginx.com/resources/wiki/modules/memc/
+raw nginx variables
+
 
 ## Installation
-
-The installation command with npm is a little different because we want the js files to exist in our source directory.
+This library can be installed using the normal npm workflow:
+```bash
+npm install njs-memory-profiler
+```
 
 This module will install to a folder called `njs_modules` in the root of your project. If you want to use a different directory, run the install with the `NJS_MODULES_DIR` environment variable specified:
 
-`NJS_MODULES_DIR=./ npm install njs-memory-profiler`
+```bash
+NJS_MODULES_DIR=./ npm install njs-memory-profiler
+```
 
 Note: As the installation will be performed by a post-install JavaScript using `node` the minimal required version of Node will be 16 or greater.
 
@@ -85,9 +94,26 @@ By default, per-request memory information will be written to the error log (in 
 
 ## Reporting Options
 
-### Log Reporting
+### Error Log Reporting
 
 By default, the profiler will simply log some json to the error log. This is the default behavior. Invoking the profiler as described in "Usage" will have this effect.
+
+### Access Log Reporting
+
+The library provides nginx configuration files that can be used to set up additional variables and provides a log format.
+
+To enable additional variables:
+```nginx
+include njs_modules/conf/profiler_extra_vars.conf;
+```
+
+Using the provided variables you may set up your own log or use the provided format:
+```nginx
+include njs_modules/conf/profiler_log_format;
+access_log /my/log/location/profiler.log profiler;
+```
+
+# TODO: this can't be used with the vm destroy hook. How do we represent events in this model?
 
 ### File Reporting
 
@@ -203,10 +229,32 @@ See the annotated example of output below:
 
 There is a small amount of overhead from the profiler, however it is smaller than one "block" of memory so adding the profiler won't make a difference in your baseline number. However you will roll over to the next block more quickly. For any measurements, assume that you have a variance of `page_size`.
 
-
 ## Interpreting memory growth
 
 Njs pre-allocates memory and then continues to preallocate more in "blocks" of `page_size` bytes. This means that it's possible to add code that will certainly use more memory, but `size` may not change because njs is working within its preallocated memory footprint already.
+
+## Profiling Backends
+As part of its operation the profile needs to save some information for the duration of the request.  By default, this data will be saved in njs variables.
+
+The choice of backend will not affect how you instrument your code - but it could be useful if you find that the profiler overhead is too great.
+
+### NGINX Variables (default)
+Profiling snapshots are condensed
+### NGINX key-value store (NGINX Plus only)
+
+### Memcached (TODO)
+
+### Redis (TODO)
+
+## Directory Structure and Files
+```bash
+.
+├── conf    <----- NGINX configuration files
+├── package-lock.json
+├── package.json
+├── scripts <----- internal scripts used by the library.
+└── src     <----- Njs-compatible Javascript sources
+```
 
 ## Contributing
 

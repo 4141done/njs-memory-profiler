@@ -33,17 +33,16 @@ function init(r, requestId, reporterFn) {
   
   pushEvent(r, EVENT_TYPE_TO_STRING[`${EVENT_TYPES.START}`], EVENT_TYPES.START);
   r.variables.profiler_status = PROFILER_STATUS.RUNNING;
-  r.error("TEST PRINT BRA");
   // We run final collection on vm exit, but you can manually
   // invoke collection earlier by manually calling `collect`.
   // If this is done, we don't collect again on vm exit.
   njs.on("exit", () => {
     if (r.variables.profiler_status !== PROFILER_STATUS.DONE) {
-      r.error("RUNNING EXIT TING");
+      r.error("RUNNING EXIT");
     // No async work in this context
     collect(r, reporterFn);
     } else {
-      r.error(`SKIPPING EXIT TING: ${r.variables.profiler_status}`)
+      r.error(`SKIPPING EXIT: ${r.variables.profiler_status}`)
     }
   });
 }

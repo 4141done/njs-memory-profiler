@@ -33,22 +33,19 @@ function init(r, requestId, reporterFn) {
   
   pushEvent(r, EVENT_TYPE_TO_STRING[`${EVENT_TYPES.START}`], EVENT_TYPES.START);
   r.variables.profiler_status = PROFILER_STATUS.RUNNING;
+
   // We run final collection on vm exit, but you can manually
   // invoke collection earlier by manually calling `collect`.
   // If this is done, we don't collect again on vm exit.
   njs.on("exit", () => {
-    if (r.variables.profiler_status !== PROFILER_STATUS.DONE) {
-      r.error("RUNNING EXIT");
     // No async work in this context
     collect(r, reporterFn);
-    } else {
-      r.error(`SKIPPING EXIT: ${r.variables.profiler_status}`)
-    }
   });
 }
 
 function collect(r, reporterFn) {
-  r.error('in the collector');
+  if (parseInt(r.variables.profiler_status, 10) === PROFILER_STATUS.DONE) return;
+
   reporterFn = reporterFn || logReporter;
   const endEventName = EVENT_TYPE_TO_STRING[`${EVENT_TYPES.END}`];
 
@@ -57,10 +54,10 @@ function collect(r, reporterFn) {
       .map((rawEvent) => {
         const event = deserializeEvent(rawEvent);
         event.id = r.profiler_request_id;
-        event.type = EVENT_TYPE_TO_STRING[type]
+        event.type = EVENT_TYPE_TO_STRING[event.type]
         return event;
       });
-  r.error(`after map: ${endEventName}`);
+
   events.push({
         name: endEventName,
         type: endEventName,
@@ -68,8 +65,11 @@ function collect(r, reporterFn) {
         size: njs.memoryStats.size,
         nblocks: njs.memoryStats.nblocks
       });
-  r.error(JSON.stringify(events));
+
   reporterFn(events, r);
+  
+  // Set this at the top since it stops other `collect` calls from initiating
+  r.variables.profiler_status = PROFILER_STATUS.DONE;
 }
 
 function pushEvent(r, eventName, type) {
@@ -106,7 +106,6 @@ function deserializeEvent(rawEvent) {
  * @property {function} getReport - Returns the current tracked memory state
  */
 function varReporter(report, r) {
-  r.error(`In the varReporter, ${JSON.stringify(report)}`);
   r.variables.profile_end = serialize(report.end);
   r.variables.profile_elapsed_time_ms = report.elapsed_time_ms;
   r.variables.profile_memory_growth_bytes = report.growth.size_growth;
@@ -114,7 +113,6 @@ function varReporter(report, r) {
 }
 
 function logReporter(events, r) {
-  r.eror('in the log reporter');
   r.error(JSON.stringify(events));
 }
 

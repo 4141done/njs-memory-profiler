@@ -6,21 +6,22 @@ This is a small tool designed to allow you understand the per-request memory usa
 
 ## TODO:
 
-* Unit tests
-* Add CONTRIBUTING.md
-* Add Code of conduct file
-* Allow report to be written to variable in access log
-* Complete jsdocs
-* Add CHANGELOG
-* NPM push on version change via github actions
-* Implement various backends for the various store: http://nginx.org/en/docs/http/ngx_http_memcached_module.html
-nginx keyvalue store
-https://www.nginx.com/resources/wiki/modules/memc/
-raw nginx variables
-
+- Unit tests
+- Add CONTRIBUTING.md
+- Add Code of conduct file
+- Allow report to be written to variable in access log
+- Complete jsdocs
+- Add CHANGELOG
+- NPM push on version change via github actions
+- Implement various backends for the various store: http://nginx.org/en/docs/http/ngx_http_memcached_module.html
+  nginx keyvalue store
+  https://www.nginx.com/resources/wiki/modules/memc/
+  raw nginx variables
 
 ## Installation
+
 This library can be installed using the normal npm workflow:
+
 ```bash
 npm install njs-memory-profiler
 ```
@@ -44,7 +45,6 @@ Assume we have a basic setup like this:
 
 `main.mjs`
 
-
 ```javascript
 function hello(r) {
   r.return(200, "hello");
@@ -54,7 +54,6 @@ export default { hello };
 ```
 
 `nginx.conf`
-
 
 ```nginx
 events {}
@@ -77,7 +76,6 @@ http {
 Next, import the package, and initialize the profiler:
 
 `main.mjs`
-
 
 ```javascript
 import profiler from "./njs_modules/njs-memory-profiler/njs-memory-profiler.mjs";
@@ -103,11 +101,13 @@ By default, the profiler will simply log some json to the error log. This is the
 The library provides nginx configuration files that can be used to set up additional variables and provides a log format.
 
 To enable additional variables:
+
 ```nginx
 include njs_modules/conf/profiler_extra_vars.conf;
 ```
 
 Using the provided variables you may set up your own log or use the provided format:
+
 ```nginx
 include njs_modules/conf/profiler_log_format;
 access_log /my/log/location/profiler.log profiler;
@@ -148,7 +148,6 @@ profiler.init(r, (report, r) => {
 
 At any point after you initialize the profiler, you can take a snapshot of the memory state at a certain point:
 
-
 ```javascript
 import profiler from "./njs-memory-profiler.mjs";
 
@@ -172,54 +171,35 @@ See the annotated example of output below:
 
 ```json
 {
-  "request_id": "f005408d17a3b420132bb554c19a2066",
-  // These values are static and depend on your system
-  "cluster_size": 32768,
-  "page_size": 512,
-  "begin": {
-    // all timestamps are milliseconds since January 1, 1970 00:00:00 UTC.
-    "req_start_ms": 1669241329831,
-    // memory usage in bytes at the beginning of the request
-    "size": 47600,
-    // Number of memory blocks from the system allocated by njs
-    "nblocks": 3
-  },
-  "end": {
-    "req_end_ms": 1669241331834,
-    "size": 48216,
-    "nblocks": 4
-  },
-  "growth": {
-    // memory growth over the course of the request in bytes
-    "size_growth": 616,
-    // number of additional memory block allocated over the course of the request
-    "nblocks_growth": 1
-  },
-  "elapsed_time_ms": 2003,
+  "id": "cc7da804b5a8fdd9b803a87965cde018",
   "events": [
     {
-      "event": "before_wait",
-      // arbitrary keys and values can be passed to `meta`
-      // created_at_ms is created by the library
-      "meta": {
-        "foo": "bar",
-        "created_at_ms": 1669241329831
-      },
-      "raw_stats": {
-        "size": 47600,
-        "nblocks": 3
-      }
+      "type": "profiler:start",
+      "name": "profiler:start",
+      "createdAt": 1671144443913,
+      "size": 47600,
+      "nblocks": 3
     },
     {
-      "event": "after_wait",
-      "meta": {
-        "foo": "bar",
-        "created_at_ms": 1669241331833
-      },
-      "raw_stats": {
-        "size": 56408,
-        "nblocks": 5
-      }
+      "type": "profiler:snapshot",
+      "name": "main_func",
+      "createdAt": 1671144443913,
+      "size": 47600,
+      "nblocks": 3
+    },
+    {
+      "type": "profiler:snapshot",
+      "name": "js_var",
+      "createdAt": 1671144443913,
+      "size": 47600,
+      "nblocks": 3
+    },
+    {
+      "name": "profiler:end",
+      "type": "profiler:end",
+      "createdAt": 1671144443913,
+      "size": 47600,
+      "nblocks": 3
     }
   ]
 }
@@ -234,12 +214,15 @@ There is a small amount of overhead from the profiler, however it is smaller tha
 Njs pre-allocates memory and then continues to preallocate more in "blocks" of `page_size` bytes. This means that it's possible to add code that will certainly use more memory, but `size` may not change because njs is working within its preallocated memory footprint already.
 
 ## Profiling Backends
-As part of its operation the profile needs to save some information for the duration of the request.  By default, this data will be saved in njs variables.
+
+As part of its operation the profile needs to save some information for the duration of the request. By default, this data will be saved in njs variables.
 
 The choice of backend will not affect how you instrument your code - but it could be useful if you find that the profiler overhead is too great.
 
 ### NGINX Variables (default)
+
 Profiling snapshots are condensed
+
 ### NGINX key-value store (NGINX Plus only)
 
 ### Memcached (TODO)
@@ -247,6 +230,7 @@ Profiling snapshots are condensed
 ### Redis (TODO)
 
 ## Directory Structure and Files
+
 ```bash
 .
 ├── conf    <----- NGINX configuration files
@@ -259,4 +243,3 @@ Profiling snapshots are condensed
 ## Contributing
 
 Please see the [contribution guide](CONTRIBUTING.md)
-

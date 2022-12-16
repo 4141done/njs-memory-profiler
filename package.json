@@ -1,24 +1,24 @@
 {
-    "name": "njs-memory-profiler",
-    "version": "0.0.3",
-    "description": "Simple memory profiling tool written for the NGINX Javascript Module (njs)",
-    "main": "src/index.mjs",
-    "scripts": {
-        "test": "echo \"Prerelease code: tests pending\" && exit 0",
-        "postinstall": "node scripts/postinstall.js"
-    },
-    "engines": {
-        "njs": ">= 0.7.9",
-        "node": ">=16"
-    },
-    "keywords": [
-        "njs",
-        "nginx-njs"
-    ],
-    "author": "Javier Evans",
-    "license": "Apache 2.0",
-    "devDependencies": {
-        "prettier": "^2.8.0",
-        "release-please": "^14.17.3"
-    }
+  "name": "njs-memory-profiler",
+  "version": "0.0.3",
+  "description": "Simple memory profiling tool written for the NGINX Javascript Module (njs)",
+  "main": "src/index.mjs",
+  "scripts": {
+    "test": "echo \"Prerelease code: tests pending\" && exit 0",
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "engines": {
+    "njs": ">= 0.7.9",
+    "node": ">=16"
+  },
+  "keywords": [
+    "njs",
+    "nginx-njs"
+  ],
+  "author": "Javier Evans",
+  "license": "Apache 2.0",
+  "devDependencies": {
+    "prettier": "^2.8.1",
+    "release-please": "^14.17.3"
+  }
 }

@@ -9,7 +9,7 @@
  * * Values are mapped to fields given the order in `EVENT_MAPPING` defined in this module
  *
  * Here is an example of the content of the variable:
- * `1|profiler:start|1671143290831|47600|3||2|main_func|1671143290831|47600|3||2|js_var|1671143290831|47600|3||``
+ * `1|profiler:start|1671143290831|47600|3||2|main_func|1671143290831|47600|3||2|js_var|1671143290831|47600|3``
  */
 
 /**
@@ -273,7 +273,7 @@ function fileReporter(report) {
   const fs = require("fs");
 
   return fs.writeFileSync(
-    `${report.profiler_request_id}.json`,
+    `${report.id}.json`,
     JSON.stringify(report)
   );
 }

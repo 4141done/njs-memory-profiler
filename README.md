@@ -94,7 +94,8 @@ function hello(r) {
 export default { hello };
 ```
 
-By default, per-request memory information will be written to the error log (in this case, `/tmp/error.log`).
+By default, per-request memory information will be written to the error log (in this case, `/tmp/error.log`). It is not necessary to call `profiler.collect`
+yourself unless you are going to use "Access Log Reporting" (see below)
 
 ## Reporting Options
 
@@ -122,15 +123,18 @@ include njs_modules/njs-memory-profiler/conf/profiler_log_format_json.conf;
 access_log /my/log/location/profiler.log profiler;
 ```
 
-> :warning: **You MUST call `collect` explicitly**
+> :warning: **You MUST call `collect` explicitly** when using this strategy.
 Since usually the profiler reports on the njs `exit` event, you must call the `collect` function with this reporter explicitly in the last part of your njs script because access logs are written before that event:
 
 ```javascript
 import profiler from "./njs-memory-profiler.mjs";
+
+// Pass `null` for the reporter on init since you
+// will be calling `collect` yourself later.
 profiler.init(r, null);
 // your code
 profiler.collect(r, profiler.varReporter);
-r.return(200, "woohoo");
+r.return(200, "We made it!");
 ```
 
 ### File Reporting

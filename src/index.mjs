@@ -5,7 +5,7 @@
  * string in an nginx variable.  The format is as follows:
  * * Everything is an event (including start and end)
  * * Events are separated by `||`
- * * Values within an event are separeted by `|`
+ * * Values within an event are separated by `|`
  * * Values are mapped to fields given the order in `EVENT_MAPPING` defined in this module
  *
  * Here is an example of the content of the variable:

@@ -124,7 +124,7 @@ access_log /my/log/location/profiler.log profiler;
 ```
 
 > :warning: **You MUST call `collect` explicitly** when using this strategy.
-Since usually the profiler reports on the njs `exit` event, you must call the `collect` function with this reporter explicitly in the last part of your njs script because access logs are written before that event:
+> Since usually the profiler reports on the njs `exit` event, you must call the `collect` function with this reporter explicitly in the last part of your njs script because access logs are written before that event:
 
 ```javascript
 import profiler from "./njs-memory-profiler.mjs";
@@ -197,8 +197,8 @@ See the annotated example of output below:
     {
       // There are three types of events: `profiler:start`, `profiler:snapshot`, `profiler:end`
       "type": "profiler:start",
-      
-      // Arbitrary name for the event.  For start and end they will default to 
+
+      // Arbitrary name for the event.  For start and end they will default to
       // `profiler:start` and `profiler:end`
       "name": "profiler:start",
 

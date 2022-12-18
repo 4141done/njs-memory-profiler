@@ -272,10 +272,7 @@ function logReporter(events, r) {
 function fileReporter(report) {
   const fs = require("fs");
 
-  return fs.writeFileSync(
-    `${report.id}.json`,
-    JSON.stringify(report)
-  );
+  return fs.writeFileSync(`${report.id}.json`, JSON.stringify(report));
 }
 
 function serializeEvent(event) {

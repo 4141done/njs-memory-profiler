@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/4141done/njs-memory-profiler/compare/v0.1.3...v0.1.4) (2022-12-20)
+
+
+### Bug Fixes
+
+* remove ability to install to custom directory ([8b531d7](https://github.com/4141done/njs-memory-profiler/commit/8b531d7c7baa4af4c5942a752c713c4a0dedf947))
+
 ## [0.1.3](https://github.com/4141done/njs-memory-profiler/compare/v0.0.2...v0.1.3) (2022-12-19)
 
 

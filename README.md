@@ -1,6 +1,6 @@
 # njs-memory-profiler
 
-This is a small tool designed to allow you understand the per-request memory usage of your njs script in a non-production environment.
+This is a small tool designed to allow you understand the per-request memory usage of your njs script in a **non-production environment**.
 
 > This library is under active development and the interface may change without notice.
 
